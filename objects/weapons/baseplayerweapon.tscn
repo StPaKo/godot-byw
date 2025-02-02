@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3 uid="uid://tgqdeenbproo"]
+
+[ext_resource type="Script" path="res://scripts/weapons/weapon.gd" id="1_5v4i4"]
+[ext_resource type="Texture2D" uid="uid://1rqobpl2w70w" path="res://assets/weapons/Potions.png" id="1_7abpb"]
+[ext_resource type="PackedScene" uid="uid://7pggc7wxv3v" path="res://objects/weapons/bullets/PlayerBullet.tscn" id="2_dc6gl"]
+[ext_resource type="Script" path="res://scripts/components/weapons/RegularPlayerShooterComponent.gd" id="2_g3f6j"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6uddg"]
+atlas = ExtResource("1_7abpb")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qflrd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6uddg")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="BasePlayerWeapon" type="RayCast2D"]
+script = ExtResource("1_5v4i4")
+bullet_type = ExtResource("2_dc6gl")
+controlled_by_input = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+rotation = -1.5708
+scale = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_qflrd")
+
+[node name="Marker2D" type="Marker2D" parent="."]
+
+[node name="Components" type="Node2D" parent="."]
+
+[node name="RegularPlayerShootComponent" type="Node2D" parent="Components" node_paths=PackedStringArray("shooter_owner", "shot_marker", "cooldown_progressbar")]
+script = ExtResource("2_g3f6j")
+shooter_owner = NodePath("../..")
+shot_marker = NodePath("../../Marker2D")
+cooldown_progressbar = NodePath("../../TextureProgressBar")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+fill_mode = 4

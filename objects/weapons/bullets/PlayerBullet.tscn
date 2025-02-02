@@ -1,0 +1,163 @@
+[gd_scene load_steps=23 format=3 uid="uid://7pggc7wxv3v"]
+
+[ext_resource type="Texture2D" uid="uid://bh4nf73gfge2l" path="res://assets/weapons/bullets/BlueCoin Sheet.png" id="1_77x8f"]
+[ext_resource type="Script" path="res://scripts/weapons/playerbullet.gd" id="1_cxj32"]
+[ext_resource type="Script" path="res://scripts/components/entities/HitboxComponent.gd" id="2_rfrsu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u4p24"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_21mdx"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5e2iy"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_byraf"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ypegg"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(64, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nt2ny"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(80, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rk1m0"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(96, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bhjm0"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(112, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_asowe"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(0, 1, 16, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tlige"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(16, 1, 16, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ewvvw"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(32, 1, 16, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h6u3n"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(48, 1, 16, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wkhac"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(64, 1, 16, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ym4kh"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(80, 1, 16, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u434s"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(96, 1, 16, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oy3tb"]
+atlas = ExtResource("1_77x8f")
+region = Rect2(112, 1, 16, 10)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5a0ae"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u4p24")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_21mdx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5e2iy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_byraf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ypegg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nt2ny")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rk1m0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bhjm0")
+}],
+"loop": true,
+"name": &"Destroy",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_asowe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tlige")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ewvvw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h6u3n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wkhac")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ym4kh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u434s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oy3tb")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ge52b"]
+radius = 17.2627
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bhohx"]
+radius = 21.2132
+
+[node name="PlayerBullet" type="Node2D"]
+script = ExtResource("1_cxj32")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_5a0ae")
+animation = &"Idle"
+
+[node name="HitboxComponent" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 20
+script = ExtResource("2_rfrsu")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxComponent"]
+shape = SubResource("CircleShape2D_ge52b")
+debug_color = Color(0, 0.647059, 1, 0.670588)
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 20
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("CircleShape2D_bhohx")
+debug_color = Color(1, 0, 0, 0.419608)
+
+[connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_entered"]
