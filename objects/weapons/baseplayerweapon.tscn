@@ -20,8 +20,9 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="BasePlayerWeapon" type="RayCast2D"]
+[node name="BasePlayerWeapon" type="RayCast2D" node_paths=PackedStringArray("shooter")]
 script = ExtResource("1_5v4i4")
+shooter = NodePath("Components/RegularPlayerShootComponent")
 bullet_type = ExtResource("2_dc6gl")
 controlled_by_input = true
 
