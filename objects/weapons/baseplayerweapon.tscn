@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://tgqdeenbproo"]
+[gd_scene load_steps=8 format=3 uid="uid://tgqdeenbproo"]
 
 [ext_resource type="Script" path="res://scripts/weapons/weapon.gd" id="1_5v4i4"]
 [ext_resource type="Texture2D" uid="uid://1rqobpl2w70w" path="res://assets/weapons/Potions.png" id="1_7abpb"]
 [ext_resource type="PackedScene" uid="uid://7pggc7wxv3v" path="res://objects/weapons/bullets/PlayerBullet.tscn" id="2_dc6gl"]
 [ext_resource type="Script" path="res://scripts/components/weapons/RegularPlayerShooterComponent.gd" id="2_g3f6j"]
+[ext_resource type="PackedScene" uid="uid://l8swwpy4ejfc" path="res://objects/ui/inventory/inventorycomponent.tscn" id="6_facng"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6uddg"]
 atlas = ExtResource("1_7abpb")
@@ -24,6 +25,7 @@ animations = [{
 script = ExtResource("1_5v4i4")
 shooter = NodePath("Components/RegularPlayerShootComponent")
 bullet_type = ExtResource("2_dc6gl")
+spread = 0.262
 controlled_by_input = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -40,6 +42,13 @@ script = ExtResource("2_g3f6j")
 shooter_owner = NodePath("../..")
 shot_marker = NodePath("../../Marker2D")
 cooldown_progressbar = NodePath("../../TextureProgressBar")
+
+[node name="InventoryComponent\'" parent="Components" instance=ExtResource("6_facng")]
+visible = false
+inventory_size = 25
+column_amount = 5
+generator_location = 10
+receiver_location = 14
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="."]
 offset_right = 40.0
