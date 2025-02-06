@@ -36,7 +36,7 @@ func set_modification(new_modification : Dictionary) -> void:
 		self.modification_power_status_label.text = "Unpowered"
 
 func _on_mouse_entered() -> void:
-	if contained_modification != { "texture": null, "name": null, "description": null }:
+	if contained_modification["texture"] != null and contained_modification["name"] != null and contained_modification["description"] != null:
 		info_panel.visible = true
 
 func _on_mouse_exited() -> void:

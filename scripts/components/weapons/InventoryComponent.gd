@@ -44,6 +44,16 @@ func _ready() -> void:
 		"Rotate left",
 		"Rotates energy left"
 	)
+	inventory[8] = Modification.new(
+		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/rotate_left 16x16.png")),
+		"Rotate left",
+		"Rotates energy left"
+	)
+	inventory[9] = Modification.new(
+		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/rotate_left 16x16.png")),
+		"Rotate left",
+		"Rotates energy left"
+	)
 	inventory[7] = Modification.new(
 		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/rotate_right 16x16.png")),
 		"Rotate right",
@@ -89,30 +99,28 @@ func _on_inventory_updated() -> void:
 
 func power_next_item(item_idx: int, limit: int) -> void:
 	var next_item_position: int = item_idx + inventory[item_idx].get_item()["direction"].y * container.columns + inventory[item_idx].get_item()["direction"].x
-	print(next_item_position)
-	if next_item_position == clamp(next_item_position, 0, inventory.size() - 1):
-		if inventory[item_idx].get_item()["direction"].x != 0 and next_item_position == clamp(next_item_position, item_idx - item_idx % column_amount, item_idx - item_idx % column_amount + column_amount - 1):
+	if next_item_position != clamp(next_item_position, 0, inventory.size() - 1):
+		return
+	if inventory[item_idx].get_item()["direction"].x != 0 and next_item_position == clamp(next_item_position, item_idx - item_idx % column_amount, item_idx - item_idx % column_amount + column_amount - 1):
+		match inventory[next_item_position].get_item()["name"]:
+			"Rotate left":
+				inventory[clamp(next_item_position, next_item_position - (next_item_position) % column_amount, next_item_position - (next_item_position) % column_amount + column_amount - 1)].power_on(inventory[item_idx].get_item()["direction"], 1)
+			"Rotate right":
+				inventory[clamp(next_item_position, next_item_position - (next_item_position) % column_amount, next_item_position - (next_item_position) % column_amount + column_amount - 1)].power_on(inventory[item_idx].get_item()["direction"], 2)
+			_:
+				inventory[clamp(next_item_position, next_item_position - (next_item_position) % column_amount, next_item_position - (next_item_position) % column_amount + column_amount - 1)].power_on(inventory[item_idx].get_item()["direction"], 0)
+	else:
+		if inventory[item_idx].get_item()["direction"].y != 0:
 			match inventory[next_item_position].get_item()["name"]:
 				"Rotate left":
-					inventory[clamp(next_item_position, next_item_position - (next_item_position) % column_amount, next_item_position - (next_item_position) % column_amount + column_amount - 1)].power_on(inventory[item_idx].get_item()["direction"], 1)
+					inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 1)
 				"Rotate right":
-					inventory[clamp(next_item_position, next_item_position - (next_item_position) % column_amount, next_item_position - (next_item_position) % column_amount + column_amount - 1)].power_on(inventory[item_idx].get_item()["direction"], 2)
+					inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 2)
 				_:
-					inventory[clamp(next_item_position, next_item_position - (next_item_position) % column_amount, next_item_position - (next_item_position) % column_amount + column_amount - 1)].power_on(inventory[item_idx].get_item()["direction"], 0)
-		else:
-			if inventory[item_idx].get_item()["direction"].y != 0:
-				match inventory[next_item_position].get_item()["name"]:
-					"Rotate left":
-						inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 1)
-					"Rotate right":
-						inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 2)
-					_:
-						inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 0)
-	if inventory[item_idx].get_item()["name"] in ["Generator", "Receiver"] and limit != 0 or limit == 2 * inventory.size():
+					inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 0)
+	if inventory[next_item_position].get_item()["name"] in ["Generator", "Receiver"] or limit == 2 * inventory.size():
 		return
-	if next_item_position == clamp(next_item_position, 0, inventory.size() - 1):
-		power_next_item(next_item_position, limit + 1)
-	print("\n\n\n\n")
+	power_next_item(next_item_position, limit + 1)
 	return
 
 
