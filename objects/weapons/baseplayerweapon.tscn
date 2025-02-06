@@ -43,10 +43,11 @@ shooter_owner = NodePath("../..")
 shot_marker = NodePath("../../Marker2D")
 cooldown_progressbar = NodePath("../../TextureProgressBar")
 
-[node name="InventoryComponent\'" parent="Components" instance=ExtResource("6_facng")]
+[node name="InventoryComponent\'" parent="Components" node_paths=PackedStringArray("inventory_owner") instance=ExtResource("6_facng")]
 visible = false
-inventory_size = 30
-column_amount = 6
+inventory_owner = NodePath("../..")
+inventory_size = 10
+column_amount = 5
 generator_dictionary = {
 "direction": Vector2i(1, 0),
 "position": 0

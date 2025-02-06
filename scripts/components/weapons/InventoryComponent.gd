@@ -2,6 +2,7 @@ extends Control
 class_name InventoryComponent
 
 var inventory = []
+@export var inventory_owner : RayCast2D
 @export var inventory_size : int = 2
 @export var column_amount : int = 2
 @export var generator_dictionary : Dictionary = { "position": 0, "direction": Vector2i(0, 0) }
@@ -11,6 +12,7 @@ var inventory = []
 const inventory_slot_preload : PackedScene = preload("res://objects/ui/inventory/inventoryslot.tscn")
 const slot_offset : int = 5
 var dragged_slot : InventorySlot = null
+var is_receiver_powered : bool = false
 
 func _ready() -> void:
 	inventory.resize(inventory_size)
@@ -32,34 +34,6 @@ func _ready() -> void:
 		"Receiver",
 		"Consumes energy so your weapon can fire"
 	)
-	
-	# remove later
-	inventory[5] = Modification.new(
-		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/double_bullet 16x16.png")),
-		"Double bullet",
-		"Doubles the amount of fired bullets"
-	)
-	inventory[6] = Modification.new(
-		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/rotate_left 16x16.png")),
-		"Rotate left",
-		"Rotates energy left"
-	)
-	inventory[8] = Modification.new(
-		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/rotate_left 16x16.png")),
-		"Rotate left",
-		"Rotates energy left"
-	)
-	inventory[9] = Modification.new(
-		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/rotate_left 16x16.png")),
-		"Rotate left",
-		"Rotates energy left"
-	)
-	inventory[7] = Modification.new(
-		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/rotate_right 16x16.png")),
-		"Rotate right",
-		"Rotates energy right"
-	)
-	
 	_on_inventory_updated()
 
 func _process(_delta: float) -> void:
@@ -78,15 +52,18 @@ func remove_modification(idx: int) -> void:
 
 func _on_inventory_updated() -> void:
 	clear()
+	inventory_owner.reset_stats()
+	self.is_receiver_powered = false
 	container.columns = column_amount
 	for i in range(inventory.size()):
 		if inventory[i].get_item()["name"] != "Generator":
 			inventory[i].power_off()
-	print(inventory)
 	for i in range(inventory.size()):
 		if inventory[i].get_item()["name"] == "Generator":
 			power_next_item(i, 0)
 			break
+	if self.is_receiver_powered:
+		apply_item_effects()
 	for item in self.inventory:
 		var slot = inventory_slot_preload.instantiate()
 		slot.slot_dragged.connect(_on_slot_dragged)
@@ -118,11 +95,20 @@ func power_next_item(item_idx: int, limit: int) -> void:
 					inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 2)
 				_:
 					inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 0)
-	if inventory[next_item_position].get_item()["name"] in ["Generator", "Receiver"] or limit == 2 * inventory.size():
+	if inventory[next_item_position].get_item()["name"] == "Receiver":
+		self.is_receiver_powered = true
+		return
+	if inventory[next_item_position].get_item()["name"] in ["Generator"] or limit == 2 * inventory.size():
 		return
 	power_next_item(next_item_position, limit + 1)
 	return
 
+func apply_item_effects() -> void:
+	for item in inventory:
+		if item.get_item()["powered"]:
+			match item.get_item()["name"]:
+				"Double bullet":
+					inventory_owner.bullets_on_shot_modify *= 2
 
 func clear() -> void:
 	while container.get_child_count() > 0:
