@@ -44,6 +44,10 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.356863)
 metadata/_edit_use_anchors_ = true
 
+[node name="Background" type="Sprite2D" parent="InnerBorder"]
+position = Vector2(30, 30)
+scale = Vector2(3.5, 3.5)
+
 [node name="ItemIcon" type="Sprite2D" parent="InnerBorder"]
 position = Vector2(30, 30)
 scale = Vector2(3.5, 3.5)
@@ -77,14 +81,35 @@ anchor_bottom = 0.5
 offset_left = -70.0
 offset_top = -26.0
 offset_right = 70.0
-offset_bottom = 46.0
+offset_bottom = 29.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+text = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 label_settings = SubResource("LabelSettings_1oqmp")
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
+
+[node name="PowerStatus" type="Label" parent="InfoPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = 30.0
+offset_right = 70.0
+offset_bottom = 47.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Unpowered
+"
+label_settings = SubResource("LabelSettings_1oqmp")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 1

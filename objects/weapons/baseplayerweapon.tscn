@@ -45,10 +45,13 @@ cooldown_progressbar = NodePath("../../TextureProgressBar")
 
 [node name="InventoryComponent\'" parent="Components" instance=ExtResource("6_facng")]
 visible = false
-inventory_size = 9
-column_amount = 3
-generator_location = 3
-receiver_location = 5
+inventory_size = 30
+column_amount = 6
+generator_dictionary = {
+"direction": Vector2i(0, 1),
+"position": 0
+}
+receiver_position = 4
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="."]
 offset_right = 40.0

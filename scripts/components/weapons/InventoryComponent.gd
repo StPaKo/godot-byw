@@ -4,8 +4,8 @@ class_name InventoryComponent
 var inventory = []
 @export var inventory_size : int = 2
 @export var column_amount : int = 2
-@export var generator_location: int = 0
-@export var receiver_location: int = 1
+@export var generator_dictionary : Dictionary = { "position": 0, "direction": Vector2i(0, 0) }
+@export var receiver_position : int = 0
 @onready var background : Panel = $Panel
 @onready var container : GridContainer = $Panel/GridContainer
 const inventory_slot_preload : PackedScene = preload("res://objects/ui/inventory/inventoryslot.tscn")
@@ -14,45 +14,69 @@ var dragged_slot : InventorySlot = null
 
 func _ready() -> void:
 	inventory.resize(inventory_size)
+	for i in range(inventory.size()):
+		inventory[i] = Modification.new()
 	background.size = Vector2(column_amount, inventory_size / column_amount) * 64 + Vector2(column_amount + 1, inventory_size / column_amount + 1) * slot_offset
 	container.position = Vector2(slot_offset, slot_offset)
 	container.add_theme_constant_override("h_separation", slot_offset)
 	container.add_theme_constant_override("v_separation", slot_offset)
-	inventory[generator_location] = Modification.new(
+	inventory[generator_dictionary["position"]] = Modification.new(
 		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/generator 16x16.png")),
 		"Generator",
-		"Emits energy to power your weapon"
+		"Emits energy to power your weapon",
+		generator_dictionary["direction"]
 	)
-	inventory[receiver_location] = Modification.new(
+	inventory[generator_dictionary["position"]].power_on(generator_dictionary["direction"], 0)
+	inventory[receiver_position] = Modification.new(
 		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/receiver 16x16.png")),
 		"Receiver",
 		"Consumes energy so your weapon can fire"
 	)
 	
 	# remove later
-	inventory[0] = Modification.new(
+	inventory[5] = Modification.new(
 		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/double_bullet 16x16.png")),
 		"Double bullet",
 		"Doubles the amount of fired bullets"
 	)
+	inventory[6] = Modification.new(
+		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/rotate_left 16x16.png")),
+		"Rotate left",
+		"Rotates energy left"
+	)
+	inventory[7] = Modification.new(
+		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/rotate_right 16x16.png")),
+		"Rotate right",
+		"Rotates energy right"
+	)
 	
 	_on_inventory_updated()
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	self.set_rotation(-self.get_parent().get_parent().rotation)
 	if Input.is_action_just_pressed("toggle_inventory"):
 		self.visible = !self.visible
 		get_tree().paused = !get_tree().paused
 
-func add_modification(modification: Dictionary) -> void:
+func add_modification(idx: int, modification: Dictionary) -> void:
+	inventory[idx] = modification
 	_on_inventory_updated()
 
 func remove_modification(idx: int) -> void:
+	inventory.erase(idx)
 	_on_inventory_updated()
 
 func _on_inventory_updated() -> void:
 	clear()
 	container.columns = column_amount
+	for i in range(inventory.size()):
+		if inventory[i].get_item()["name"] != "Generator":
+			inventory[i].power_off()
+	print(inventory)
+	for i in range(inventory.size()):
+		if inventory[i].get_item()["name"] == "Generator":
+			power_next_item(i, 0)
+			break
 	for item in self.inventory:
 		var slot = inventory_slot_preload.instantiate()
 		slot.slot_dragged.connect(_on_slot_dragged)
@@ -62,6 +86,35 @@ func _on_inventory_updated() -> void:
 			slot.set_modification(item.get_item())
 		else:
 			slot.clear()
+
+func power_next_item(item_idx: int, limit: int) -> void:
+	var next_item_position: int = item_idx + inventory[item_idx].get_item()["direction"].y * container.columns + inventory[item_idx].get_item()["direction"].x
+	print(next_item_position)
+	if next_item_position == clamp(next_item_position, 0, inventory.size() - 1):
+		if inventory[item_idx].get_item()["direction"].x != 0 and next_item_position == clamp(next_item_position, item_idx - item_idx % column_amount, item_idx - item_idx % column_amount + column_amount - 1):
+			match inventory[next_item_position].get_item()["name"]:
+				"Rotate left":
+					inventory[clamp(next_item_position, next_item_position - (next_item_position) % column_amount, next_item_position - (next_item_position) % column_amount + column_amount - 1)].power_on(inventory[item_idx].get_item()["direction"], 1)
+				"Rotate right":
+					inventory[clamp(next_item_position, next_item_position - (next_item_position) % column_amount, next_item_position - (next_item_position) % column_amount + column_amount - 1)].power_on(inventory[item_idx].get_item()["direction"], 2)
+				_:
+					inventory[clamp(next_item_position, next_item_position - (next_item_position) % column_amount, next_item_position - (next_item_position) % column_amount + column_amount - 1)].power_on(inventory[item_idx].get_item()["direction"], 0)
+		else:
+			if inventory[item_idx].get_item()["direction"].y != 0:
+				match inventory[next_item_position].get_item()["name"]:
+					"Rotate left":
+						inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 1)
+					"Rotate right":
+						inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 2)
+					_:
+						inventory[next_item_position].power_on(inventory[item_idx].get_item()["direction"], 0)
+	if inventory[item_idx].get_item()["name"] in ["Generator", "Receiver"] and limit != 0 or limit == 2 * inventory.size():
+		return
+	if next_item_position == clamp(next_item_position, 0, inventory.size() - 1):
+		power_next_item(next_item_position, limit + 1)
+	print("\n\n\n\n")
+	return
+
 
 func clear() -> void:
 	while container.get_child_count() > 0:
@@ -75,7 +128,7 @@ func _on_slot_dragged(slot: InventorySlot) -> void:
 func _on_slot_dropped() -> void:
 	var drop_target : InventorySlot = get_slot_under_mouse()
 	if drop_target and dragged_slot != drop_target:
-		drop_slot(dragged_slot, drop_target)
+		slot_drop(dragged_slot, drop_target)
 	dragged_slot = null
 
 func get_slot_under_mouse() -> InventorySlot:
@@ -92,7 +145,7 @@ func get_slot_index(slot: InventorySlot) -> int:
 			return i
 	return -1
 
-func drop_slot(drag_slot: InventorySlot, drop_slot: InventorySlot) -> void:
+func slot_drop(drag_slot: InventorySlot, drop_slot: InventorySlot) -> void:
 	var drag_slot_idx : int = get_slot_index(drag_slot)
 	var drop_slot_idx : int = get_slot_index(drop_slot)
 	if drag_slot_idx < 0 or drag_slot_idx > inventory.size() or drop_slot_idx < 0 or drop_slot_idx > inventory.size():
