@@ -7,33 +7,51 @@ var inventory = []
 @export var column_amount : int = 2
 @export var generator_dictionary : Dictionary = { "position": 0, "direction": Vector2i(0, 0) }
 @export var receiver_position : int = 0
+@export var space_positions : Array[int]
 @onready var background : Panel = $Panel
 @onready var container : GridContainer = $Panel/GridContainer
 const inventory_slot_preload : PackedScene = preload("res://objects/ui/inventory/inventoryslot.tscn")
 const slot_offset : int = 5
 var dragged_slot : InventorySlot = null
 var is_receiver_powered : bool = false
+var modification_data : Array
 
 func _ready() -> void:
+	var json : JSON = JSON.new()
+	if json.parse(FileAccess.get_file_as_string("res://scripts/modifications/modification_list.json")) == OK:
+		if typeof(json.data) == TYPE_ARRAY:
+			modification_data = json.data
+		else:
+			print("JSON read error: Unexpected data")
+	else:
+		print("JSON parse error: ", json.get_error_message(), " at line ", json.get_error_line())
 	inventory.resize(inventory_size)
 	for i in range(inventory.size()):
-		inventory[i] = Modification.new()
-	background.size = Vector2(column_amount, inventory_size / column_amount) * 64 + Vector2(column_amount + 1, inventory_size / column_amount + 1) * slot_offset
-	container.position = Vector2(slot_offset, slot_offset)
-	container.add_theme_constant_override("h_separation", slot_offset)
-	container.add_theme_constant_override("v_separation", slot_offset)
+		if i in self.space_positions:
+			inventory[i] = null
+		else:
+			inventory[i] = Modification.new()
 	inventory[generator_dictionary["position"]] = Modification.new(
-		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/generator 16x16.png")),
-		"Generator",
-		"Emits energy to power your weapon",
+		ImageTexture.create_from_image(Image.load_from_file(self.modification_data[0]["texture_path"])),
+		self.modification_data[0]["name"],
+		self.modification_data[0]["description"],
 		generator_dictionary["direction"]
 	)
 	inventory[generator_dictionary["position"]].power_on(generator_dictionary["direction"], 0)
 	inventory[receiver_position] = Modification.new(
-		ImageTexture.create_from_image(Image.load_from_file("res://assets/ui/modifications/receiver 16x16.png")),
-		"Receiver",
-		"Consumes energy so your weapon can fire"
+		ImageTexture.create_from_image(Image.load_from_file(self.modification_data[1]["texture_path"])),
+		self.modification_data[1]["name"],
+		self.modification_data[1]["description"]
 	)
+	inventory[1] = Modification.new(
+		ImageTexture.create_from_image(Image.load_from_file(self.modification_data[2]["texture_path"])),
+		self.modification_data[2]["name"],
+		self.modification_data[2]["description"]
+	)
+	background.size = Vector2(column_amount, inventory_size / column_amount) * 64 + Vector2(column_amount + 1, inventory_size / column_amount + 1) * slot_offset
+	container.position = Vector2(slot_offset, slot_offset)
+	container.add_theme_constant_override("h_separation", slot_offset)
+	container.add_theme_constant_override("v_separation", slot_offset)
 	_on_inventory_updated()
 
 func _process(_delta: float) -> void:
@@ -55,10 +73,14 @@ func _on_inventory_updated() -> void:
 	inventory_owner.reset_stats()
 	self.is_receiver_powered = false
 	container.columns = column_amount
+	for item in inventory:
+		if item == null:
+			continue
+		if item.get_item()["name"] != "Generator":
+			item.power_off()
 	for i in range(inventory.size()):
-		if inventory[i].get_item()["name"] != "Generator":
-			inventory[i].power_off()
-	for i in range(inventory.size()):
+		if inventory[i] == null:
+			continue
 		if inventory[i].get_item()["name"] == "Generator":
 			power_next_item(i, 0)
 			break
@@ -69,10 +91,13 @@ func _on_inventory_updated() -> void:
 		slot.slot_dragged.connect(_on_slot_dragged)
 		slot.slot_dropped.connect(_on_slot_dropped)
 		container.add_child(slot)
-		if item != null:
-			slot.set_modification(item.get_item())
-		else:
-			slot.clear()
+		match item:
+			null:
+				slot.make_space()
+			{ "texture": null, "name": null, "description": null, "powered": false }:
+				slot.clear()
+			_:
+				slot.set_modification(item.get_item())
 
 func power_next_item(item_idx: int, limit: int) -> void:
 	var next_item_position: int = item_idx + inventory[item_idx].get_item()["direction"].y * container.columns + inventory[item_idx].get_item()["direction"].x
@@ -105,6 +130,8 @@ func power_next_item(item_idx: int, limit: int) -> void:
 
 func apply_item_effects() -> void:
 	for item in inventory:
+		if item == null:
+			continue
 		if item.get_item()["powered"]:
 			match item.get_item()["name"]:
 				"Double bullet":
@@ -135,7 +162,7 @@ func get_slot_under_mouse() -> InventorySlot:
 
 func get_slot_index(slot: InventorySlot) -> int:
 	for i in range(container.get_child_count()):
-		if container.get_child(i) == slot:
+		if container.get_child(i) == slot and container.get_child(i).contained_modification != { null : null }:
 			return i
 	return -1
 
