@@ -15,14 +15,6 @@ run/main_scene="res://maps/emptymap.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
-[autoload]
-
-global="*res://scripts/global.gd"
-
-[global_group]
-
-modifications=""
-
 [input]
 
 move_up={

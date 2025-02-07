@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/modifications/modification.gd" id="1_su661"]
 
-[node name="Modification" type="Node2D" groups=["modifications"]]
+[node name="Modification" type="Node2D"]
 script = ExtResource("1_su661")
 
 [node name="Icon" type="Sprite2D" parent="."]
