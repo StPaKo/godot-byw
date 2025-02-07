@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bc3bvdo1fcivg"]
+
+[ext_resource type="Script" path="res://scripts/modifications/modification.gd" id="1_su661"]
+
+[node name="Modification" type="Node2D" groups=["modifications"]]
+script = ExtResource("1_su661")
+
+[node name="Icon" type="Sprite2D" parent="."]
