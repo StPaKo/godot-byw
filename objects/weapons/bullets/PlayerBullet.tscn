@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://7pggc7wxv3v"]
+[gd_scene load_steps=24 format=3 uid="uid://7pggc7wxv3v"]
 
 [ext_resource type="Texture2D" uid="uid://bh4nf73gfge2l" path="res://assets/weapons/bullets/BlueCoin Sheet.png" id="1_77x8f"]
 [ext_resource type="Script" path="res://scripts/weapons/playerbullet.gd" id="1_cxj32"]
@@ -135,10 +135,14 @@ radius = 17.2627
 [sub_resource type="CircleShape2D" id="CircleShape2D_bhohx"]
 radius = 21.2132
 
+[sub_resource type="LabelSettings" id="LabelSettings_xpans"]
+font_size = 28
+
 [node name="PlayerBullet" type="Node2D"]
 script = ExtResource("1_cxj32")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
 scale = Vector2(4, 4)
 sprite_frames = SubResource("SpriteFrames_5a0ae")
 animation = &"Idle"
@@ -159,5 +163,22 @@ collision_mask = 20
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
 shape = SubResource("CircleShape2D_bhohx")
 debug_color = Color(1, 0, 0, 0.419608)
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "12"
+label_settings = SubResource("LabelSettings_xpans")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_hurtbox_entered"]

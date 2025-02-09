@@ -10,11 +10,6 @@
 		"description": "Consumes energy so your weapon can fire"
 	},
 	{
-		"name": "Double bullet",
-		"texture_path": "res://assets/ui/modifications/double_bullet 16x16.png",
-		"description": "Doubles the amount of fired bullets"
-	},
-	{
 		"name": "Rotate left",
 		"texture_path": "res://assets/ui/modifications/rotate_left 16x16.png",
 		"description": "Rotates the energy direction to the left"
@@ -23,5 +18,25 @@
 		"name": "Rotate right",
 		"texture_path": "res://assets/ui/modifications/rotate_right 16x16.png",
 		"description": "Rotates the energy direction to the right"
+	},
+	{
+		"name": "Double bullet",
+		"texture_path": "res://assets/ui/modifications/double_bullet 16x16.png",
+		"description": "Doubles the amount of fired projectiles"
+	},
+	{
+		"name": "Damage up",
+		"texture_path": "res://assets/ui/modifications/damage_up 16x16.png",
+		"description": "Increases damage of each projectile"
+	},
+	{
+		"name": "Speed up",
+		"texture_path": "res://assets/ui/modifications/speed_up 16x16.png",
+		"description": "Increases speed of each projectile"
+	},
+	{
+		"name": "Speed down",
+		"texture_path": "res://assets/ui/modifications/speed_down 16x16.png",
+		"description": "Decreases speed of each projectile"
 	},
 ]

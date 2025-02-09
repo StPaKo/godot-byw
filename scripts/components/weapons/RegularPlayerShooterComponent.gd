@@ -14,6 +14,7 @@ func shoot(delta: float) -> void:
 			bullet.owner = level_scene
 			bullet.global_transform = shot_marker.global_transform
 			bullet.speed = shooter_owner.bullet_speed_modify
+			bullet.damage = shooter_owner.damage_modify
 			var rot_mod: float = 0
 			for it_add in range(0, bs + 1):
 				rot_mod += it_add * pow(-1, it_add)

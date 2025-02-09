@@ -43,11 +43,6 @@ func _ready() -> void:
 		self.modification_data[1]["name"],
 		self.modification_data[1]["description"]
 	)
-	inventory[1] = Modification.new(
-		ImageTexture.create_from_image(Image.load_from_file(self.modification_data[2]["texture_path"])),
-		self.modification_data[2]["name"],
-		self.modification_data[2]["description"]
-	)
 	background.size = Vector2(column_amount, inventory_size / column_amount) * 64 + Vector2(column_amount + 1, inventory_size / column_amount + 1) * slot_offset
 	container.position = Vector2(slot_offset, slot_offset)
 	container.add_theme_constant_override("h_separation", slot_offset)
@@ -136,6 +131,12 @@ func apply_item_effects() -> void:
 			match item.get_item()["name"]:
 				"Double bullet":
 					inventory_owner.bullets_on_shot_modify *= 2
+				"Damage up":
+					inventory_owner.damage_modify += 1
+				"Speed up":
+					inventory_owner.bullet_speed_modify *= 1.3
+				"Speed down":
+					inventory_owner.bullet_speed_modify *= 0.5
 
 func clear() -> void:
 	while container.get_child_count() > 0:

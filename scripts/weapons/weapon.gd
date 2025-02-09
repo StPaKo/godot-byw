@@ -4,6 +4,8 @@ var lock_rotation: bool = false
 var looked_object_position: Vector2 = Vector2(0, 0)
 @export var shooter: ShootComponent
 @export var bullet_type: PackedScene
+@export var damage: int = 1
+var damage_modify: int
 @export var bullet_speed: float = 1000
 var bullet_speed_modify: float
 @export var bullets_on_shot: int = 1
@@ -33,6 +35,7 @@ func reset_stats() -> void:
 	self.bullets_on_shot_modify = self.bullets_on_shot
 	self.firerate_modify = self.firerate
 	self.spread_modify = self.spread
+	self.damage_modify = self.damage
 
 func _on_force_shot(delta: float) -> void:
 	shooter.shoot(delta)

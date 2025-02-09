@@ -1,10 +1,14 @@
 extends Node2D
 
-@onready var speed: float = 0
 @onready var anim = $AnimatedSprite2D
 @onready var justCollided: bool = false
 @onready var deadlifetime: float = 0
 @onready var stored_velocity: Vector2 = self.transform.x
+var speed: float
+var damage: int = 1
+
+func _process(delta: float) -> void:
+	$Label.text = str(self.damage)
 
 func _physics_process(delta: float) -> void:
 	position += transform.x * speed * delta
